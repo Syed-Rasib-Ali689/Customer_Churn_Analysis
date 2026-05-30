@@ -1,6 +1,6 @@
 # 📞 Customer Churn Prediction Dashboard
 
-> **Live App:** `https://<your-app>.streamlit.app` ← Replace after deployment
+> **Live App:** `https://customerchurnanalysisbysyedrasibali.streamlit.app/` ← Replace after deployment
 
 A complete end-to-end Machine Learning pipeline for predicting Telco customer churn. Six classification models are trained, benchmarked, and served through an interactive Streamlit dashboard with real-time prediction capability.
 
