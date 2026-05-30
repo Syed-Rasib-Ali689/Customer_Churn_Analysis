@@ -1,58 +1,138 @@
-# Customer Churn Prediction — Problem Understanding
+# 📞 Customer Churn Prediction Dashboard
 
-This repository contains the machine learning solution for predicting customer churn using the Telco Customer Churn dataset. Below is the detailed Problem Understanding and Business Requirements documentation for the project.
+> **Live App:** `https://<your-app>.streamlit.app` ← Replace after deployment
 
----
-
-## 1. Problem Statement
-
-* **Churn in Telecom**: Customer churn (or attrition) is the phenomenon where subscribers terminate their relationship with a service provider. In the telecommunications industry, this includes active cancellation of phone or internet services, contract non-renewal, or porting a number to a competitor.
-* **Prediction Objective**: The task is defined as a supervised **binary classification** problem. The goal is to predict whether a customer will churn in the next billing cycle:
-  * **`Churn = 1 (Yes)`**: The customer is predicted to churn.
-  * **`Churn = 0 (No)`**: The customer is predicted to remain with the provider.
-* **Dataset Source**: The project utilizes the **Telco Customer Churn Dataset (Kaggle)**, containing demographics, services, account information, and churn status for $7,043$ customers.
+A complete end-to-end Machine Learning pipeline for predicting Telco customer churn. Six classification models are trained, benchmarked, and served through an interactive Streamlit dashboard with real-time prediction capability.
 
 ---
 
-## 2. Business Goal
+## 📌 Business Problem
 
-* **Acquisition vs. Retention Costs**: In a highly saturated telecommunications market, customer acquisition is capital-intensive. It costs **5 to 25 times more** to acquire a new customer (Customer Acquisition Cost - CAC) than it does to retain an existing one (Customer Retention Cost - CRC).
-* **Proactive Retention Interventions**: Early churn prediction allows customer-facing teams to intervene proactively before a customer cancels their service. Effective interventions include:
-  * **Targeted Loyalty Incentives**: Waived fees, billing credits, or device upgrade discounts for high-value accounts.
-  * **Specialized Service Plans**: Re-aligning data limits or features to match the customer's actual usage patterns, reducing costs for under-utilizers.
-  * **Contract Re-negotiations**: Offering introductory discount packages to transition high-risk month-to-month subscribers into 1-year or 2-year contracts.
-* **Revenue Impact of Undetected Churn**: Undetected churn causes direct erosion of Monthly Recurring Revenue (MRR) and decreases Customer Lifetime Value (CLV). Additionally, it forces the business to spend more on customer acquisition just to maintain a flat user base, severely degrading profitability.
+Customer churn costs telecom providers **5–25× more** than retaining existing customers. This project builds a binary classifier to identify high-risk subscribers **before** they cancel, enabling marketing and customer success teams to launch targeted retention interventions — reducing Monthly Recurring Revenue (MRR) erosion and improving Customer Lifetime Value (CLV).
 
 ---
 
-## 3. Success Criteria
+## 📊 Dataset
 
-* **Recall is the Priority**: 
-  $$\text{Recall} = \frac{\text{True Positives (TP)}}{\text{True Positives (TP)} + \text{False Negatives (FN)}}$$
-  Recall measures the percentage of actual churners the model flags. In this business scenario, missing a churner (False Negative) means the customer is lost forever, whereas flagging a customer who wasn't going to leave (False Positive) only results in a minor cost for a retention discount. Therefore, maximizing Recall is the primary objective.
-* **Accuracy is Misleading**: The dataset exhibits class imbalance (approximately $73.5\%$ active, $26.5\%$ churned). A naive classifier predicting "No Churn" for every customer would achieve $73.5\%$ accuracy but fail to identify a single at-risk customer. Accuracy is therefore an insufficient metric.
-* **F1 Score**: 
-  $$\text{F1 Score} = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}$$
-  The F1 Score provides a balanced harmonic mean of Precision and Recall. It ensures that while we maximize Recall, we do not completely collapse Precision (which would lead to over-predicting churn and wasting retention budgets on stable customers).
-
----
-
-## 4. Stakeholders
-
-* **Marketing Teams**: Use risk segmentations to design targeted, high-ROI retention campaigns and determine the optimal allocation of promotional budgets.
-* **Customer Success Managers**: Prioritize accounts flagged as high-risk, using tailored conversation scripts and billing concessions during support calls.
-* **Product Teams**: Identify specific services (e.g., fiber optic lines or lack of tech support) that correlate with high churn rates, informing feature updates and service improvements.
-* **Finance Team**: Predict revenue retention, forecast future cash flows (MRR), and calculate the financial returns of retention campaigns compared to acquisition spend.
+| Property | Value |
+|---|---|
+| Source | [Telco Customer Churn — Kaggle](https://www.kaggle.com/datasets/blastchar/telco-customer-churn) |
+| Records | 7,043 customers |
+| Features | 20 (demographics, services, account info) |
+| Target | `Churn` — Yes (26.54%) / No (73.46%) |
+| Class Imbalance | Handled with SMOTE on training set only |
 
 ---
 
-## 5. Proposed Solution
+## 🛠 Tech Stack
 
-* **Machine Learning Pipeline**: A comprehensive classification pipeline will be built to preprocess features, handle class imbalance, and evaluate model performance. We will compare performance across **6 algorithms**:
-  1. Logistic Regression
-  2. Decision Tree
-  3. Random Forest
-  4. K-Nearest Neighbors (KNN)
-  5. Support Vector Machine (SVM)
-  6. XGBoost (Extreme Gradient Boosting)
-* **Interactive Deployment**: The best-performing model (optimized for Recall and F1 Score) will be exported and deployed as an interactive **Streamlit dashboard**. This dashboard will allow stakeholders to input customer attributes, obtain real-time churn probabilities, and view recommended retention strategies.
+| Library | Version | Purpose |
+|---|---|---|
+| Python | 3.10+ | Core language |
+| Streamlit | ≥1.35 | Interactive dashboard |
+| Scikit-learn | ≥1.4 | ML models, preprocessing, metrics |
+| XGBoost | ≥2.0 | Gradient boosting classifier |
+| Imbalanced-learn | ≥0.12 | SMOTE oversampling |
+| Plotly | ≥5.20 | Interactive visualizations |
+| Pandas | ≥2.0 | Data manipulation |
+| Joblib | ≥1.3 | Model serialization |
+
+---
+
+## 📁 Project Structure
+
+```
+project/
+├── data/
+│   └── WA_Fn-UseC_-Telco-Customer-Churn.csv   # Raw dataset
+├── notebooks/
+│   ├── dataset_analysis.ipynb                  # Phase 2 — Dataset understanding
+│   ├── eda_analysis.ipynb                      # Phase 3 — Exploratory data analysis
+│   ├── preprocessing.ipynb                     # Phase 4 — Data preprocessing pipeline
+│   ├── model_training.ipynb                    # Phase 5 — Train & evaluate 6 models
+│   ├── model_comparison.ipynb                  # Phase 6 — Comparison charts & champion selection
+│   └── hyperparameter_tuning.ipynb             # Phase 7 — GridSearchCV & RandomizedSearchCV
+├── models/
+│   ├── scaler.pkl                              # Fitted StandardScaler
+│   ├── logistic_regression.pkl                 # Trained model
+│   ├── decision_tree.pkl                       # Trained model
+│   ├── random_forest.pkl                       # Trained model
+│   ├── knn.pkl                                 # Trained model
+│   ├── svm.pkl                                 # Trained model
+│   ├── xgboost.pkl                             # Trained model
+│   ├── random_forest_tuned.pkl                 # Tuned RF model
+│   ├── xgboost_tuned.pkl                       # Tuned XGBoost model
+│   ├── results_summary.csv                     # All model metrics
+│   └── tuning_comparison.csv                   # Baseline vs tuned comparison
+├── processed/
+│   ├── X_train.pkl                             # SMOTE-resampled training features
+│   ├── X_test.pkl                              # Test features
+│   ├── y_train.pkl                             # Training labels
+│   └── y_test.pkl                              # Test labels
+├── visuals/
+│   └── churn_distribution_chart.png            # EDA export
+├── app.py                                      # Streamlit application entry point
+├── utils.py                                    # Helper functions (load, preprocess, predict)
+├── requirements.txt                            # Pinned dependencies
+└── README.md                                   # This file
+```
+
+---
+
+## 🔍 Key EDA Findings
+
+- **Month-to-month contracts** have the highest churn rate (~43%), compared to ~11% for two-year contracts — contract type is the strongest churn predictor.
+- **Fiber optic internet customers** churn at nearly double the rate of DSL users, suggesting service quality or pricing issues.
+- **Customers with short tenure (0–12 months)** are significantly more likely to churn; loyalty increases sharply after 24 months.
+- **Electronic check payment** users churn at ~45% vs ~15–18% for automatic payment methods, indicating billing friction is a risk factor.
+- **High monthly charges (>$70/month)** correlate strongly with churn, particularly in the absence of tech support or online security services.
+
+---
+
+## 🏆 Model Evaluation Leaderboard
+
+| Model | Accuracy | Precision | Recall | F1 | ROC-AUC |
+|---|---|---|---|---|---|
+| **Logistic Regression** ⭐ | 0.7608 | 0.5354 | 0.7487 | **0.6243** | **0.8352** |
+| SVM | 0.7637 | 0.5412 | 0.7193 | 0.6177 | 0.8220 |
+| XGBoost | 0.7622 | 0.5419 | 0.6738 | 0.6007 | 0.8089 |
+| Random Forest | 0.7651 | 0.5504 | 0.6283 | 0.5868 | 0.8192 |
+| KNN | 0.7204 | 0.4826 | 0.7433 | 0.5853 | 0.7821 |
+| Decision Tree | 0.7062 | 0.4565 | 0.5615 | 0.5036 | 0.6598 |
+
+**Champion: Logistic Regression** — Highest F1 (0.6243) and ROC-AUC (0.8352). It also achieves the highest Recall (0.7487), meaning it catches the most actual churners — the primary business objective.
+
+---
+
+## 🚀 Local Installation
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/<your-username>/<your-repo>.git
+cd <your-repo>
+
+# 2. Install dependencies
+pip install -r requirements.txt
+
+# 3. Run the Streamlit app
+streamlit run app.py
+```
+
+> **Note:** The `processed/` and `models/` files are included. If you want to re-run the full pipeline, execute the notebooks in order: `preprocessing.ipynb` → `model_training.ipynb` → `hyperparameter_tuning.ipynb` → `model_comparison.ipynb`
+
+---
+
+## ☁ Deployment (Streamlit Community Cloud)
+
+1. Push this repository to a **public GitHub repo**
+2. Go to [share.streamlit.io](https://share.streamlit.io) → **New app**
+3. Connect your GitHub repo
+4. Set **Main file path**: `app.py`
+5. Click **Deploy**
+6. Copy the live URL and update the badge at the top of this README
+
+---
+
+## 📸 Screenshots
+
+> Add 3–4 dashboard screenshots here after deployment (Home, EDA, Model Comparison, Prediction pages).
